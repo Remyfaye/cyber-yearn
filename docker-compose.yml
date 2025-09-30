@@ -1,0 +1,41 @@
+# version: "3.8"
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: cyberuser
+      POSTGRES_PASSWORD: cyberpass
+      POSTGRES_DB: cyberdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  directus:
+    image: directus/directus:latest
+    restart: always
+    ports:
+      - "8055:8055"
+    volumes:
+      - directus-uploads:/directus/uploads
+      - directus-database:/directus/database
+    environment:
+      KEY: "truelysupersecretKey@1"
+      SECRET: "truelysupersecretSecret@1"
+      DB_CLIENT: "pg"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_DATABASE: "cyberdb"
+      DB_USER: "cyberuser"
+      DB_PASSWORD: "cyberpass"
+      ADMIN_EMAIL: "example@admin.com"
+      ADMIN_PASSWORD: "adminpass"
+      STORAGE_LOCATIONS: "local"
+      STORAGE_LOCAL_DRIVER: "local"
+      STORAGE_LOCAL_ROOT: "/directus/uploads"
+    depends_on:
+      - postgres
+volumes:
+  postgres-data:
+  directus-uploads:
+  directus-database:
